@@ -8,14 +8,16 @@
 
 import UIKit
 
-class SearchResultsViewController: UIViewController {
+class SearchResultsViewController: UIViewController, DetailViewDelegate {
 
     let store = DataStore.sharedInstance
     var searchResultsViewInst = SearchResultsView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        self.searchResultsViewInst.delegate = self
+        
+        // fetch the initial set of images
         APIClient.searchFlicker(tags: "") { isSuccessful in
             if isSuccessful {
                 OperationQueue.main.addOperation {
@@ -48,11 +50,12 @@ class SearchResultsViewController: UIViewController {
         self.title = "flickr Search"
     }
     
-    //    func openItemDetail(item: MyItem) {
-    //        let itemDetailViewControllerInst = ItemDetailViewController()
-    //        itemDetailViewControllerInst.itemInst = item
-    //        self.navigationController?.pushViewController(itemDetailViewControllerInst, animated: false)
-    //    }
+    func openDetail(item: Item) {
+        print("openDetail in VC")
+        let detailViewControllerInst = DetailViewController()
+        detailViewControllerInst.detailViewInst.itemInst = item
+        self.navigationController?.pushViewController(detailViewControllerInst, animated: false)
+    }
     
     func showAlertMessage(_ message: String) {
         let alertController = UIAlertController(title: "Error", message: message, preferredStyle: UIAlertControllerStyle.alert)

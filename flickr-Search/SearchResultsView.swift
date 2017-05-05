@@ -9,12 +9,18 @@
 import UIKit
 import SDWebImage
 
+protocol DetailViewDelegate: class {
+    func openDetail(item: Item)
+    func showAlertMessage(_: String)
+}
+
 class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     let store = DataStore.sharedInstance
+    weak var delegate: DetailViewDelegate?
     let searchResultsTableView = UITableView()
     let searchController = UISearchController(searchResultsController: nil)
-    
+
     override init(frame:CGRect){
         super.init(frame: frame)
         
@@ -66,17 +72,15 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         
         // set the image
         cell.itemImageView.image = nil
-        if itemCurrent.media.isEmpty {
-            // show no image found
-            cell.itemImageView.image = #imageLiteral(resourceName: "noImageFound.jpg")
-        } else {
-            // show the image per the URL
-            let itemImageURL = URL(string: itemCurrent.media)
-            cell.itemImageView.sd_setImage(with: itemImageURL)
-        }
+        let itemImageURL = URL(string: itemCurrent.media)
+        cell.itemImageView.sd_setImage(with: itemImageURL)
         cell.itemImageView.contentMode = .scaleAspectFit
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.delegate?.openDetail(item: self.store.items[indexPath.row])
     }
     
     func pageLayout() {
@@ -103,8 +107,6 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
-        print("searchBarSearchButtonClicked = \(String(describing: self.searchController.searchBar.text))")
-        
         if let searchString = self.searchController.searchBar.text {
             APIClient.searchFlicker(tags: searchString) { isSuccessful in
                 if isSuccessful {
@@ -121,7 +123,8 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
                     
                         //self.searchResultsViewInst.activityIndicatorXConstraintWhileDisplayed.isActive = false
                         //self.searchResultsViewInst.activityIndicatorXConstraintWhileHidden.isActive = true
-                        //self.showAlertMessage(message)
+                        
+                        self.delegate?.showAlertMessage(message)
                     
                     }
                 }
@@ -129,4 +132,6 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         }
 
     }
+    
+
 }

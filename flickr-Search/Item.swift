@@ -17,8 +17,10 @@ class Item {
     var description: String
     var author: String
     var tags: String
+    var width: Int
+    var height: Int
     
-    init (title: String, link: String, media: String, date_taken: Date, description: String,author: String, tags: String) {
+    init (title: String, link: String, media: String, date_taken: Date, description: String,author: String, tags: String, width: Int, height: Int) {
         
         self.title = title
         self.link = link
@@ -27,5 +29,7 @@ class Item {
         self.description = description
         self.author = author
         self.tags = tags
+        self.width = width
+        self.height = height
     }
 }

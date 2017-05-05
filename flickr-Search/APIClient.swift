@@ -45,12 +45,21 @@ class APIClient {
                                                             if let author = itemDict["author"] as? String {
                                                                 if let tags = itemDict["tags"] as? String {
                                                                     
+                                                                    // find width
+                                                                    //let descriptionChars = description.characters
+//                                                                    let widthStartIndex = description.characters.index(of: "w")
+//                                                                    if let widthRange = description.range(of: "width") {
+//                                                                        //let tld = description[widthRange]                 // "com"
+//                                                                        //print("widthRange = \(widthRange)")
+//                                                                    }
+                                                                    //print("widthStartIndex = \(widthStartIndex)")
+                                                                    
                                                                     // Convert date_takenString to Date
                                                                     let dateFormat = DateFormatter()
                                                                     dateFormat.dateFormat = "yyyy-MM-dd'T'HH:mm:ss-SS:SS"
                                                                     if let date_taken = (dateFormat.date(from: date_takenString) as NSDate?) {
                                                                         
-                                                                        let itemInst = Item(title: title, link: link, media: media, date_taken: date_taken as Date, description: description, author: author, tags: tags)
+                                                                        let itemInst = Item(title: title, link: link, media: media, date_taken: date_taken as Date, description: description, author: author, tags: tags, width: 0, height: 0)
                                                                         //print("*** item.title = \(itemInst.title)")
                                                                         itemsUnsorted.append(itemInst)
                                                                     }
