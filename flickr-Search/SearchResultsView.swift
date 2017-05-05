@@ -9,22 +9,20 @@
 import UIKit
 import SDWebImage
 
-class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate {
+class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     let store = DataStore.sharedInstance
     let searchResultsTableView = UITableView()
-    var filteredItems = [Item]()
     let searchController = UISearchController(searchResultsController: nil)
     
     override init(frame:CGRect){
         super.init(frame: frame)
         
-        
         self.searchResultsTableView.delegate = self
         self.searchResultsTableView.dataSource = self
         self.searchResultsTableView.register(SearchResultsTableViewCell.self, forCellReuseIdentifier: "prototype")
         
-        self.searchController.searchResultsUpdater = self
+        self.searchController.searchBar.delegate = self
         self.searchController.hidesNavigationBarDuringPresentation = false
         self.searchController.dimsBackgroundDuringPresentation = false
         self.searchResultsTableView.tableHeaderView = self.searchController.searchBar
@@ -47,28 +45,20 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if searchController.isActive && searchController.searchBar.text != "" {
-            return filteredItems.count
-        }
         return self.store.items.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat{
-        return 72
+        return 300
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "prototype", for: indexPath) as! SearchResultsTableViewCell
         var itemCurrent: Item
-        if searchController.isActive && searchController.searchBar.text != "" {
-            itemCurrent = self.filteredItems[indexPath.row]
-        } else {
-            itemCurrent = self.store.items[indexPath.row]
-        }
-        
-        // set the title and subtitle
+        itemCurrent = self.store.items[indexPath.row]
+
+        // set the title
         cell.titleLabel.text = itemCurrent.title
-        //cell.subTitleLabel.text = self.store.getCategoryLabelFromID(id: itemCurrent.categoryID)
         
         //        let printFormat = DateFormatter()
         //        printFormat.dateFormat = "MMM dd, yyyy h:mm a"
@@ -89,20 +79,13 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate {
         return cell
     }
     
-    func filterContentForSearchText(searchText: String, scope: String = "All") {
-        self.filteredItems = self.store.items.filter { item in
-            return item.title.lowercased().contains(searchText.lowercased())
-        }
-        self.searchResultsTableView.reloadData()
-    }
-    
     func pageLayout() {
         
         // myItemsTableView
         self.addSubview(self.searchResultsTableView)
         self.searchResultsTableView.translatesAutoresizingMaskIntoConstraints = false
-        self.searchResultsTableView.topAnchor.constraint(equalTo: self.topAnchor, constant: 64).isActive = true
-        self.searchResultsTableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -50).isActive = true
+        self.searchResultsTableView.topAnchor.constraint(equalTo: self.topAnchor, constant: 0).isActive = true
+        self.searchResultsTableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
         self.searchResultsTableView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         self.searchResultsTableView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         
@@ -117,12 +100,33 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate {
         //        self.activityIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
         //        self.activityIndicator.widthAnchor.constraint(equalToConstant: 80).isActive = true
     }
-}
-
-extension SearchResultsView: UISearchResultsUpdating {
-    public func updateSearchResults(for searchController: UISearchController) {
-        if let searchText = self.searchController.searchBar.text {
-            self.filterContentForSearchText(searchText: searchText)
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        
+        print("searchBarSearchButtonClicked = \(String(describing: self.searchController.searchBar.text))")
+        
+        if let searchString = self.searchController.searchBar.text {
+            APIClient.searchFlicker(tags: searchString) { isSuccessful in
+                if isSuccessful {
+                    OperationQueue.main.addOperation {
+                        // reload tableview to show search results
+                        self.searchResultsTableView.reloadData()
+                        //viewController.myItemsViewInst.activityIndicatorXConstraintWhileDisplayed.isActive = false
+                        //viewController.myItemsViewInst.activityIndicatorXConstraintWhileHidden.isActive = true
+                    }
+                } else {
+                    OperationQueue.main.addOperation {
+                        // show error message in the current view
+                        let message = "Unable to retrieve data from the server."
+                    
+                        //self.searchResultsViewInst.activityIndicatorXConstraintWhileDisplayed.isActive = false
+                        //self.searchResultsViewInst.activityIndicatorXConstraintWhileHidden.isActive = true
+                        //self.showAlertMessage(message)
+                    
+                    }
+                }
+            }
         }
+
     }
 }

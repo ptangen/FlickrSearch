@@ -16,7 +16,7 @@ class SearchResultsViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        APIClient.searchFlicker(tags: "cat") { isSuccessful in
+        APIClient.searchFlicker(tags: "") { isSuccessful in
             if isSuccessful {
                 OperationQueue.main.addOperation {
                     // reload tableview to show search results
@@ -32,7 +32,6 @@ class SearchResultsViewController: UIViewController {
                     //self.searchResultsViewInst.activityIndicatorXConstraintWhileDisplayed.isActive = false
                     //self.searchResultsViewInst.activityIndicatorXConstraintWhileHidden.isActive = true
                     self.showAlertMessage(message)
-                    
                 }
             }
         }
@@ -46,7 +45,7 @@ class SearchResultsViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.title = "Flicker Search"
+        self.title = "flickr Search"
     }
     
     //    func openItemDetail(item: MyItem) {

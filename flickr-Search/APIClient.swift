@@ -13,7 +13,8 @@ class APIClient {
     class func searchFlicker(tags: String, completion: @escaping (Bool) -> Void) {
         
         let store = DataStore.sharedInstance
-        let urlString = "https://api.flickr.com/services/feeds/photos_public.gne?tagmode=any&format=json&nojsoncallback=1&tags=car"
+        let urlString = "https://api.flickr.com/services/feeds/photos_public.gne?tagmode=any&format=json&nojsoncallback=1&tags=\(tags)"
+        print(urlString)
         let url = URL(string: urlString)
         if let url = url {
             var request = URLRequest(url: url)

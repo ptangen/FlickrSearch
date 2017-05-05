@@ -29,16 +29,16 @@ class SearchResultsTableViewCell: UITableViewCell {
         //itemImageView
         contentView.addSubview(self.itemImageView)
         self.itemImageView.translatesAutoresizingMaskIntoConstraints = false
-        self.itemImageView.topAnchor.constraint(equalTo: self.topAnchor, constant: 6).isActive = true
-        self.itemImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 6).isActive = true
-        self.itemImageView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -6).isActive = true
-        self.itemImageView.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        self.itemImageView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        self.itemImageView.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 0).isActive = true
+        self.itemImageView.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0).isActive = true
+        self.itemImageView.heightAnchor.constraint(equalToConstant: 250).isActive = true
         
         //titleLabel
         contentView.addSubview(self.titleLabel)
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        self.titleLabel.bottomAnchor.constraint(equalTo: self.centerYAnchor, constant: -2).isActive = true
-        self.titleLabel.leftAnchor.constraint(equalTo: self.itemImageView.rightAnchor, constant: 6).isActive = true
-        self.titleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: 0).isActive = true
+        self.titleLabel.topAnchor.constraint(equalTo: self.itemImageView.bottomAnchor, constant: 10).isActive = true
+        self.titleLabel.leftAnchor.constraint(equalTo: self.leftAnchor, constant: 3).isActive = true
+        self.titleLabel.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -3).isActive = true
     }
 }
