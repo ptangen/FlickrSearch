@@ -19,10 +19,10 @@ class DetailViewController: UIViewController {
     }
     
     override func loadView(){
-        // hide nav bar on login page
         self.navigationController?.setNavigationBarHidden(false, animated: .init(true))
         self.detailViewInst.frame = CGRect.zero
         self.view = self.detailViewInst
+        self.navigationController?.navigationBar.backItem?.title = "" // results in a back button label of "<"
     }
 
     override func didReceiveMemoryWarning() {
@@ -37,16 +37,4 @@ class DetailViewController: UIViewController {
         
         self.detailViewInst.titleLabel.text = self.detailViewInst.itemInst.title
     }
-    
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

@@ -38,7 +38,6 @@ class DetailView: UIView {
         self.itemImageView.contentMode = .scaleAspectFit
         self.itemImageView.heightAnchor.constraint(equalToConstant: 200).isActive = true
         
-        
         // nameLabel
         self.addSubview(self.titleLabel)
         self.titleLabel.translatesAutoresizingMaskIntoConstraints = false

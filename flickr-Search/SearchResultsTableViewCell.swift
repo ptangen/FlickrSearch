@@ -20,6 +20,7 @@ class SearchResultsTableViewCell: UITableViewCell {
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
+        self.titleLabel.numberOfLines = 0
         self.titleLabel.accessibilityIdentifier = "titleLabel"
         self.cellLayout()
     }

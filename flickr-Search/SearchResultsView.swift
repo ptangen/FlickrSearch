@@ -11,7 +11,7 @@ import SDWebImage
 
 protocol DetailViewDelegate: class {
     func openDetail(item: Item)
-    func showAlertMessage(_: String)
+    func getFlickrData(searchString: String)
 }
 
 class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
@@ -55,7 +55,7 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat{
-        return 300
+        return 360
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -64,7 +64,7 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         itemCurrent = self.store.items[indexPath.row]
 
         // set the title
-        cell.titleLabel.text = itemCurrent.title
+        cell.titleLabel.text = itemCurrent.title + " (" + String(itemCurrent.width) + " x " + String(itemCurrent.height) + ")"
         
         //        let printFormat = DateFormatter()
         //        printFormat.dateFormat = "MMM dd, yyyy h:mm a"
@@ -92,46 +92,15 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         self.searchResultsTableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
         self.searchResultsTableView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         self.searchResultsTableView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
-        
-        // activityIndicator
-        //        self.addSubview(self.activityIndicator)
-        //        self.activityIndicator.translatesAutoresizingMaskIntoConstraints = false
-        //        self.activityIndicatorXConstraintWhileHidden = self.activityIndicator.centerXAnchor.constraint(equalTo: self.leftAnchor, constant: -40)
-        //        self.activityIndicatorXConstraintWhileDisplayed = self.activityIndicator.centerXAnchor.constraint(equalTo: self.centerXAnchor)
-        //        self.activityIndicatorXConstraintWhileHidden.isActive = true
-        //        self.activityIndicatorXConstraintWhileDisplayed.isActive = false
-        //        self.activityIndicator.heightAnchor.constraint(equalToConstant: 80).isActive = true
-        //        self.activityIndicator.centerYAnchor.constraint(equalTo: self.centerYAnchor).isActive = true
-        //        self.activityIndicator.widthAnchor.constraint(equalToConstant: 80).isActive = true
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         
+        // issue the query to flickr with the search term
         if let searchString = self.searchController.searchBar.text {
-            APIClient.searchFlicker(tags: searchString) { isSuccessful in
-                if isSuccessful {
-                    OperationQueue.main.addOperation {
-                        // reload tableview to show search results
-                        self.searchResultsTableView.reloadData()
-                        //viewController.myItemsViewInst.activityIndicatorXConstraintWhileDisplayed.isActive = false
-                        //viewController.myItemsViewInst.activityIndicatorXConstraintWhileHidden.isActive = true
-                    }
-                } else {
-                    OperationQueue.main.addOperation {
-                        // show error message in the current view
-                        let message = "Unable to retrieve data from the server."
-                    
-                        //self.searchResultsViewInst.activityIndicatorXConstraintWhileDisplayed.isActive = false
-                        //self.searchResultsViewInst.activityIndicatorXConstraintWhileHidden.isActive = true
-                        
-                        self.delegate?.showAlertMessage(message)
-                    
-                    }
-                }
+            if let delegate = self.delegate {
+                delegate.getFlickrData(searchString: searchString)
             }
         }
-
     }
-    
-
 }
