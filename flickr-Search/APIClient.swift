@@ -44,47 +44,50 @@ class APIClient {
                         
                         if let responseJSON = responseJSON {
                             //if let itemsDictAny = responseJSON["items"] {
-                                
-                                let itemsDict = responseJSON["items"] as! [[String:Any]]
-                                
-                                //unwrap the incoming data and populate item array in datastore
-                                for itemDict in itemsDict {
-                                    if let titleEncoded = itemDict["title"] as? String {
-                                        if let linkEncoded = itemDict["link"] as? String {
-                                            if let mediaDict = itemDict["media"] as? [String:String] {
-                                                if let media = mediaDict["m"] {
-                                                    if let date_takenString = itemDict["date_taken"] as? String {
-                                                        if let descriptionEncoded = itemDict["description"] as? String {
-                                                            if let authorEncoded = itemDict["author"] as? String {
-                                                                if let tagsEncoded = itemDict["tags"] as? String {
+                            
+                            let itemsDict = responseJSON["items"] as! [[String:Any]]
+                            
+                            //unwrap the incoming data and populate item array in datastore
+                            for itemDict in itemsDict {
+                                if let titleEncoded = itemDict["title"] as? String {
+                                    if let linkEncoded = itemDict["link"] as? String {
+                                        if let mediaDict = itemDict["media"] as? [String:String] {
+                                            if let media = mediaDict["m"] {
+                                                if let date_takenString = itemDict["date_taken"] as? String {
+                                                    if let descriptionEncoded = itemDict["description"] as? String {
+                                                        if let authorEncoded = itemDict["author"] as? String {
+                                                            if let tagsEncoded = itemDict["tags"] as? String {
+                                                                
+                                                                // decode strings
+                                                                let title = self.decodeCharactersIn(string: titleEncoded)
+                                                                let link = self.decodeCharactersIn(string: linkEncoded)
+                                                                var description = self.decodeCharactersIn(string: descriptionEncoded)
+                                                                // trim the spaces and colons
+                                                                let set = CharacterSet(charactersIn: " , :")
+                                                                description = description.trimmingCharacters(in: set)
+                                                                
+                                                                let author = self.decodeCharactersIn(string: authorEncoded)
+                                                                let tags = self.decodeCharactersIn(string: tagsEncoded)
+                                                                
+                                                                // get width and height from description
+                                                                let width = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "width")
+                                                                let height = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "height")
+                                                                
+                                                                // Convert date_takenString to Date
+                                                                let dateFormat = DateFormatter()
+                                                                dateFormat.dateFormat = "yyyy-MM-dd'T'HH:mm:ss-SS:SS"
+                                                                if let date_taken = (dateFormat.date(from: date_takenString) as NSDate?) {
                                                                     
-                                                                    // decode strings
-                                                                    let title = self.decodeCharactersIn(string: titleEncoded)
-                                                                    let link = self.decodeCharactersIn(string: linkEncoded)
-                                                                    let description = self.decodeCharactersIn(string: descriptionEncoded)
-                                                                    let author = self.decodeCharactersIn(string: authorEncoded)
-                                                                    let tags = self.decodeCharactersIn(string: tagsEncoded)
-                                                                    
-                                                                    // get width and height from description
-                                                                    let width = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "width")
-                                                                    let height = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "height")
-                                                                    
-                                                                    // Convert date_takenString to Date
-                                                                    let dateFormat = DateFormatter()
-                                                                    dateFormat.dateFormat = "yyyy-MM-dd'T'HH:mm:ss-SS:SS"
-                                                                    if let date_taken = (dateFormat.date(from: date_takenString) as NSDate?) {
-                                                                        
-                                                                        // create object
-                                                                        let itemInst = Item(title: title, link: link, media: media, date_taken: date_taken as Date, description: description, author: author, tags: tags, width: width, height: height)
-                                                                        itemsUnsorted.append(itemInst)
-                                                                    }
+                                                                    // create object
+                                                                    let itemInst = Item(title: title, link: link, media: media, date_taken: date_taken as Date, description: description, author: author, tags: tags, width: width, height: height)
+                                                                    itemsUnsorted.append(itemInst)
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 }
                                             }
-                                       // }
+                                        }
                                     }
                                 } // end for loop
                                 store.items = itemsUnsorted.sorted(by: { $0.title < $1.title }) // sort by title
@@ -119,7 +122,8 @@ class APIClient {
     
     static func getValueFromDesc(descriptionEncoded: String, imgTagAttribute: String) -> Int {
         
-        // the description contains the width and height of the image as attributes an HTML img tag, for example:  ... width="240" height="180" ...
+        // the description contains the width and height of the image as attributes an HTML img 
+        // tag, for example:  ... width="240" height="180" ...
         // this function return the width or height requested
 
         let imgTagAttributeWithEqual = imgTagAttribute + "="

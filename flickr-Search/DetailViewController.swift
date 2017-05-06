@@ -30,11 +30,21 @@ class DetailViewController: UIViewController {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.title = "Item Detail" // nav bar title
+        self.title = "Image Details" // nav bar title
 
         let itemImageURL = URL(string: self.detailViewInst.itemInst.media)
         self.detailViewInst.itemImageView.sd_setImage(with: itemImageURL)
+        self.detailViewInst.layoutForm()
         
-        self.detailViewInst.titleLabel.text = self.detailViewInst.itemInst.title
+        self.detailViewInst.titleTextView.text = self.detailViewInst.itemInst.title + "\n\n" + self.detailViewInst.itemInst.description
+        self.detailViewInst.dimensionsLabel.text = String(self.detailViewInst.itemInst.width) + " x " + String(self.detailViewInst.itemInst.height)
+        
+        let printDateFormat = DateFormatter()
+        printDateFormat.dateFormat = "MMM dd, yyyy"
+        self.detailViewInst.dateLabel.text = printDateFormat.string(from:self.detailViewInst.itemInst.date_taken as Date)
+        
+        let printTimeFormat = DateFormatter()
+        printTimeFormat.dateFormat = "h:mm a"
+        self.detailViewInst.timeLabel.text = printTimeFormat.string(from:self.detailViewInst.itemInst.date_taken as Date)
     }
 }

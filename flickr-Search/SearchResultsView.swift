@@ -74,10 +74,6 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         cell.titleLabel.text = itemCurrent.title
         cell.dimensionLabel.text = "(" + String(itemCurrent.width) + " x " + String(itemCurrent.height) + ")"
         
-        //        let printFormat = DateFormatter()
-        //        printFormat.dateFormat = "MMM dd, yyyy h:mm a"
-        //        print("date_taken: \(printFormat.string(from:date_taken! as Date))")
-        
         // set the image
         cell.itemImageView.image = nil
         let itemImageURL = URL(string: itemCurrent.media)
