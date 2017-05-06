@@ -55,7 +55,14 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat{
-        return 360
+        // we want to fill the cell with the image, so we get the multipler needed to fill the width
+        // then apply the multiplier to the height, then set contentMode = .scaleAspectFit
+        
+        let imageWidth = self.store.items[indexPath.row].width
+        let multiplier = self.frame.width/CGFloat(imageWidth)
+        
+        let cellHeight = CGFloat(self.store.items[indexPath.row].height) * multiplier
+        return cellHeight
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -63,8 +70,9 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         var itemCurrent: Item
         itemCurrent = self.store.items[indexPath.row]
 
-        // set the title
-        cell.titleLabel.text = itemCurrent.title + " (" + String(itemCurrent.width) + " x " + String(itemCurrent.height) + ")"
+        // set the title and dimensions
+        cell.titleLabel.text = itemCurrent.title
+        cell.dimensionLabel.text = "(" + String(itemCurrent.width) + " x " + String(itemCurrent.height) + ")"
         
         //        let printFormat = DateFormatter()
         //        printFormat.dateFormat = "MMM dd, yyyy h:mm a"
