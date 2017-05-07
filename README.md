@@ -33,7 +33,7 @@ about the image (the image URL, title, or whatever is available).
 - Use best practices when designing your layout
 - This Flickr API doesn’t handle single quotes in the JSON response well for our purposes. You may need to replace “\’” (backslash single quote) with just “‘“ (single quote).
 - You may use third party libraries if you’d like, Cocoapods or carthage is acceptable. You won’t be penalized if you use them and don’t feel like you must use them. Here are some libraries we’ve seen success with:
-- SDWebImage
-- AlamoFire (AFNetworking)
-- JSONModel
+    - SDWebImage
+    - AlamoFire (AFNetworking)
+    - JSONModel
 - Remember, if you run into any problems at all please ask for help! The point of this exercise isn’t to spin your wheels - we’d like to have a solid body of work to talk about when the exercise is over.
