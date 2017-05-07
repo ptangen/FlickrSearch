@@ -7,6 +7,7 @@ target 'flickr-Search' do
 
   # Pods for flickr-Search
 	pod 'SDWebImage'
+	pod 'SwiftyJSON', '~> 3.1'
 
 end
 

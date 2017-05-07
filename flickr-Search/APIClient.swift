@@ -7,67 +7,57 @@
 //
 
 import Foundation
+import SwiftyJSON // only used to convert the JSON to a string and fix the invalid JSON
 
 class APIClient {
-    
-    var foundCharacters = String()
     
     class func searchFlickr(tags: String, completion: @escaping (String) -> Void) {
         
         let store = DataStore.sharedInstance
         var itemsUnsorted = [Item]()
         if let tagsEncoded = tags.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) {
-        let urlString = "https://api.flickr.com/services/feeds/photos_public.gne?tagmode=any&nojsoncallback=1&format=json&tags=\(tagsEncoded)"
-        print(urlString)
-        let url = URL(string: urlString)
-        if let url = url {
-            var request = URLRequest(url: url)
-            
-            request.setValue("application/json", forHTTPHeaderField: "Accept")
-            request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-            
-            URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
+            let urlString = "https://api.flickr.com/services/feeds/photos_public.gne?tagmode=any&nojsoncallback=1&format=json&tags=\(tagsEncoded)"
+            let url = URL(string: urlString)
+            if let url = url {
+                var request = URLRequest(url: url)
+                request.setValue("application/json", forHTTPHeaderField: "Accept")
+                request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
                 
-                if let unwrappedData = data {
+                URLSession.shared.dataTask(with: request, completionHandler: { data, response, error in
                     store.items.removeAll()
                     
-                    // trying to clean up invalid JSON
-                    // convert json to a string
-                    var unwrappedDataString = String(describing: unwrappedData)
-                    // replace \' with a ' in the string
-                    unwrappedDataString = unwrappedDataString.replacingOccurrences(of: "\\'", with: "'")
-                    // convert string back to JSON
-                    // As far as I can tell, this is not possible.
+                    // we have the results, now remove the extra \ so JSON is valid
+                    let jsonWithInvalidChars = JSON(data: data!)
                     
-                    do {
-                        let responseJSON = try JSONSerialization.jsonObject(with: unwrappedData, options: []) as? [String: Any]
+                    if let jsonWithInvalidCharsString = jsonWithInvalidChars.rawString() {
+                        let jsonWithValidCharsString = jsonWithInvalidCharsString.replacingOccurrences(of: "\\'", with: "'")
                         
-                        if let responseJSON = responseJSON {
-                            //if let itemsDictAny = responseJSON["items"] {
-                            
-                            let itemsDict = responseJSON["items"] as! [[String:Any]]
-                            
-                            //unwrap the incoming data and populate item array in datastore
-                            for itemDict in itemsDict {
-                                if let titleEncoded = itemDict["title"] as? String {
-                                    if let linkEncoded = itemDict["link"] as? String {
-                                        if let mediaDict = itemDict["media"] as? [String:String] {
-                                            if let media = mediaDict["m"] {
-                                                if let date_takenString = itemDict["date_taken"] as? String {
-                                                    if let descriptionEncoded = itemDict["description"] as? String {
-                                                        if let authorEncoded = itemDict["author"] as? String {
-                                                            if let tagsEncoded = itemDict["tags"] as? String {
+                        if let jsonWithValidCharsData = jsonWithValidCharsString.data(using: String.Encoding.utf8) {
+                            do {
+                                // create the dictionary of objects
+                                if let responseJSON = try JSONSerialization.jsonObject(with: jsonWithValidCharsData, options: []) as? [String: Any] {
+                                    let itemsDict = responseJSON["items"] as! [[String:Any]]
+                                    
+                                    //unwrap the incoming data and populate item array in datastore
+                                    for itemDict in itemsDict {
+                                        if let titleEncoded = itemDict["title"] as? String {
+                                            if let linkEncoded = itemDict["link"] as? String {
+                                                if let mediaDict = itemDict["media"] as? [String:String] {
+                                                    if let media = mediaDict["m"] {
+                                                        if let date_takenString = itemDict["date_taken"] as? String {
+                                                            if let descriptionEncoded = itemDict["description"] as? String {
                                                                 
-                                                                // decode strings
-                                                                let title = self.decodeCharactersIn(string: titleEncoded)
+                                                                // clean strings
+                                                                let charsToTrim = CharacterSet(charactersIn: " , :")
+                                                                
+                                                                var title = self.decodeCharactersIn(string: titleEncoded)
+                                                                title = title.trimmingCharacters(in: charsToTrim)
+                                                                title.characters.count == 0 ? title = "no title" : ()
+                                                                
                                                                 let link = self.decodeCharactersIn(string: linkEncoded)
-                                                                var description = self.decodeCharactersIn(string: descriptionEncoded)
-                                                                // trim the spaces and colons
-                                                                let set = CharacterSet(charactersIn: " , :")
-                                                                description = description.trimmingCharacters(in: set)
                                                                 
-                                                                let author = self.decodeCharactersIn(string: authorEncoded)
-                                                                let tags = self.decodeCharactersIn(string: tagsEncoded)
+                                                                var description = self.decodeCharactersIn(string: descriptionEncoded)
+                                                                description = description.trimmingCharacters(in: charsToTrim)
                                                                 
                                                                 // get width and height from description
                                                                 let width = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "width")
@@ -79,7 +69,7 @@ class APIClient {
                                                                 if let date_taken = (dateFormat.date(from: date_takenString) as NSDate?) {
                                                                     
                                                                     // create object
-                                                                    let itemInst = Item(title: title, link: link, media: media, date_taken: date_taken as Date, description: description, author: author, tags: tags, width: width, height: height)
+                                                                    let itemInst = Item(title: title, link: link, media: media, date_taken: date_taken as Date, description: description, width: width, height: height)
                                                                     itemsUnsorted.append(itemInst)
                                                                 }
                                                             }
@@ -87,27 +77,26 @@ class APIClient {
                                                     }
                                                 }
                                             }
-                                        }
+                                        } // end for loop
+                                        store.items = itemsUnsorted.sorted(by: { $0.title < $1.title }) // sort by title
                                     }
-                                } // end for loop
-                                store.items = itemsUnsorted.sorted(by: { $0.title < $1.title }) // sort by title
+                                }
+                                // return response
+                                store.items.count == 0 ? completion("noItemsFound") : completion("success")
+                            } catch {
+                                // Invalid JSON is returned periodically even after slash is removed.
+                                // When this occurs, report the issue so the query can be issued again.
+                                if String(describing: error).contains("Code=3840") {
+                                    completion("invalidJSON")
+                                } else {
+                                    completion("error") // JSON is valid, but another error occurred.
+                                }
+                                print("error = \(error)")
                             }
                         }
-                        // return response
-                        store.items.count == 0 ? completion("noItemsFound") : completion("success")
-                    } catch {
-                        // Invalid JSON is returned about periodically, reissue the query if needed
-                        let invalidJSON = String(describing: error).contains("Code=3840")
-                        if invalidJSON {
-                            completion("invalidJSON")
-                        } else {
-                            print("error = \(error)")
-                            completion("error") // JSON is valid, but another error occurred.
-                        }
                     }
-                }
-            }).resume()
-        }
+                }).resume()
+            }
         }
     }
 

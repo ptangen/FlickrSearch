@@ -16,10 +16,12 @@ class SearchResultsViewController: UIViewController, DetailViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.searchResultsViewInst.delegate = self
-        self.definesPresentationContext = true // hides search bar after navigating away
+        self.definesPresentationContext = true // hides search bar after navigating away from the page
         
         // fetch the initial set of images from flickr
-        self.getFlickrData(searchString: "")
+        let initialSearchTerm = "cat"
+        self.searchResultsViewInst.searchController.searchBar.text = initialSearchTerm
+        self.searchResultsViewInst.searchBarSearchButtonClicked(self.searchResultsViewInst.searchController.searchBar)
     }
     
     func getFlickrData(searchString:String) {

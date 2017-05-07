@@ -27,6 +27,7 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         self.searchResultsTableView.delegate = self
         self.searchResultsTableView.dataSource = self
         self.searchResultsTableView.register(SearchResultsTableViewCell.self, forCellReuseIdentifier: "prototype")
+        self.searchResultsTableView.separatorStyle = UITableViewCellSeparatorStyle.none
         
         self.searchController.searchBar.delegate = self
         self.searchController.hidesNavigationBarDuringPresentation = false
