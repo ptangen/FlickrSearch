@@ -20,10 +20,7 @@ class DetailView: UIView {
     
     override init(frame:CGRect){
         super.init(frame: frame)
-        self.accessibilityLabel = "detailViewInst"
-        self.titleTextView.accessibilityLabel = "titleTextView"
-        self.dateLabel.accessibilityLabel = "dateLabel"
-        self.timeLabel.accessibilityLabel = "timeLabel"
+
         self.titleTextView.textColor = UIColor.black
         self.titleTextView.isEditable = false
         self.titleTextView.font = UIFont.systemFont(ofSize: 20)
@@ -31,6 +28,12 @@ class DetailView: UIView {
         self.dateLabel.textColor = UIColor.lightGray
         self.dimensionsLabel.textColor = UIColor.lightGray
         self.grayBarView.backgroundColor = UIColor.darkGray
+        
+        self.accessibilityLabel = "detailViewInst"
+        self.titleTextView.accessibilityLabel = "titleTextView"
+        self.dateLabel.accessibilityLabel = "dateLabel"
+        self.timeLabel.accessibilityLabel = "timeLabel"
+        self.dimensionsLabel.accessibilityLabel = "dimensionsLabel"
     }
     
     required init?(coder aDecoder: NSCoder) {

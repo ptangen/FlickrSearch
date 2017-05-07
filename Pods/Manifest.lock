@@ -1,17 +1,22 @@
 PODS:
+  - KIF (3.5.1):
+    - KIF/Core (= 3.5.1)
+  - KIF/Core (3.5.1)
   - SDWebImage (4.0.0):
     - SDWebImage/Core (= 4.0.0)
   - SDWebImage/Core (4.0.0)
   - SwiftyJSON (3.1.4)
 
 DEPENDENCIES:
+  - KIF
   - SDWebImage
   - SwiftyJSON (~> 3.1)
 
 SPEC CHECKSUMS:
+  KIF: 082eb65279e51c3092923802849eb796a04982ab
   SDWebImage: 76a6348bdc74eb5a55dd08a091ef298e56b55e41
   SwiftyJSON: c2842d878f95482ffceec5709abc3d05680c0220
 
-PODFILE CHECKSUM: 0aee60428fa9887f59c7669d24e79b47fd39b71c
+PODFILE CHECKSUM: 3c7de8c41121f1cb11c9cab259c009e66d3fdb31
 
 COCOAPODS: 1.1.1

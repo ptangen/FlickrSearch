@@ -73,12 +73,21 @@ class SearchResultsViewController: UIViewController, DetailViewDelegate {
     func showAlertMessage(title: String, message: String) {
         let alertController = UIAlertController(title: title, message: message, preferredStyle: UIAlertControllerStyle.alert)
         alertController.addAction(UIAlertAction(title: "OK", style: UIAlertActionStyle.default,handler: nil))
+        //OK-NoResults
         
         if presentedViewController == nil {
-            self.present(alertController, animated: true, completion: nil)
+            self.present(alertController, animated: true, completion: {
+                if let okButton = alertController.actions.first {
+                    okButton.accessibilityLabel = "okButton"
+                }
+            })
         } else{
             self.dismiss(animated: false) { () -> Void in
-                self.present(alertController, animated: true, completion: nil)
+                self.present(alertController, animated: true, completion: {
+                    if let okButton = alertController.actions.first {
+                        okButton.accessibilityLabel = "okButton"
+                    }
+                })
             }
         }
     }

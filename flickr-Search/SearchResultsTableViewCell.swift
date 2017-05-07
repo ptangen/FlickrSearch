@@ -24,9 +24,12 @@ class SearchResultsTableViewCell: UITableViewCell {
 
         self.titleLabel.textColor = UIColor.lightGray
         self.dimensionLabel.textColor = UIColor.lightGray
+        
+        self.cellLayout()
+        
         self.titleLabel.accessibilityIdentifier = "titleLabel"
         self.dimensionLabel.accessibilityIdentifier = "dimensionLabel"
-        self.cellLayout()
+        
     }
     
     func cellLayout() {

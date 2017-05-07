@@ -2,12 +2,18 @@
 # platform :ios, '9.0'
 
 target 'flickr-Search' do
-  # Comment the next line if you're not using Swift and don't want to use dynamic frameworks
-  use_frameworks!
+
+	use_frameworks!
 
   # Pods for flickr-Search
 	pod 'SDWebImage'
 	pod 'SwiftyJSON', '~> 3.1'
+
+	target 'flickr-SearchTests' do
+		inherit! :search_paths
+		pod 'KIF'
+		
+	end
 
 end
 

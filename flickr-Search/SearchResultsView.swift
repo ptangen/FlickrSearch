@@ -20,6 +20,7 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
     weak var delegate: DetailViewDelegate?
     let searchResultsTableView = UITableView()
     let searchController = UISearchController(searchResultsController: nil)
+    let getSearchResultsButtonForUITest = UIButton()
 
     override init(frame:CGRect){
         super.init(frame: frame)
@@ -34,11 +35,15 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         self.searchController.dimsBackgroundDuringPresentation = false
         self.searchResultsTableView.tableHeaderView = self.searchController.searchBar
         
+        self.getSearchResultsButtonForUITest.addTarget(self, action: #selector(getSearchResults), for: UIControlEvents.touchUpInside)
+        
         self.pageLayout()
         
         self.accessibilityLabel = "searchResultsViewInst"
         self.searchResultsTableView.accessibilityIdentifier = "searchResultsTableView"
         self.searchResultsTableView.accessibilityLabel = "searchResultsTableView"
+        self.searchController.searchBar.accessibilityLabel = "searchField"
+        self.getSearchResultsButtonForUITest.accessibilityLabel = "getSearchResultsButtonForUITest"
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -97,6 +102,13 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
         self.searchResultsTableView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 0).isActive = true
         self.searchResultsTableView.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
         self.searchResultsTableView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
+        
+        // getSearchResultsButtonForUITest
+        self.addSubview(self.getSearchResultsButtonForUITest)
+        self.getSearchResultsButtonForUITest.translatesAutoresizingMaskIntoConstraints = false
+        self.getSearchResultsButtonForUITest.topAnchor.constraint(equalTo: self.topAnchor, constant: 31).isActive = true
+        self.getSearchResultsButtonForUITest.leftAnchor.constraint(equalTo: self.leftAnchor).isActive = true
+        // the button has no label or background color so it cant be seen in the upper left corner of the search bar.
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -107,5 +119,10 @@ class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UIS
                 delegate.getFlickrData(searchString: searchString)
             }
         }
+    }
+    
+    func getSearchResults () {
+        // used by the UI test
+        self.searchBarSearchButtonClicked(self.searchController.searchBar)
     }
 }
