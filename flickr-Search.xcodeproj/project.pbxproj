@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		39733E5CC52A379B3879D8D8 /* Pods_flickr_Search.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DC78FEB9EB1EE6920A5429BC /* Pods_flickr_Search.framework */; };
-		C0620D161EBF8093003EE296 /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0620D151EBF8093003EE296 /* UITests.swift */; };
+		C049F9D91EC1189800BADE78 /* UITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0620D151EBF8093003EE296 /* UITests.swift */; };
 		C08FBD1C1EBC98950067FC25 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C08FBD1B1EBC98950067FC25 /* AppDelegate.swift */; };
 		C08FBD231EBC98950067FC25 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C08FBD221EBC98950067FC25 /* Assets.xcassets */; };
 		C08FBD261EBC98950067FC25 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C08FBD241EBC98950067FC25 /* LaunchScreen.storyboard */; };
@@ -142,11 +142,11 @@
 		C0D844791EBF7EA300898660 /* flickr-SearchTests */ = {
 			isa = PBXGroup;
 			children = (
-				C0D844821EBF7FA100898660 /* KIF+Extensions.swift */,
 				C0D8447A1EBF7EA300898660 /* flickr_SearchTests.swift */,
+				C0620D151EBF8093003EE296 /* UITests.swift */,
+				C0D844821EBF7FA100898660 /* KIF+Extensions.swift */,
 				C0D8447C1EBF7EA300898660 /* Info.plist */,
 				C0620D111EBF805E003EE296 /* flickr-SearchTests-Bridging-Header.h */,
-				C0620D151EBF8093003EE296 /* UITests.swift */,
 			);
 			path = "flickr-SearchTests";
 			sourceTree = "<group>";
@@ -345,7 +345,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run \'pod install\' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		D3CA79059658A71310D8D0CB /* [CP] Check Pods Manifest.lock */ = {
@@ -360,7 +360,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run \'pod install\' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		DE59F8A12A9C2106B5432111 /* [CP] Copy Pods Resources */ = {
@@ -403,7 +403,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C0D844831EBF7FA100898660 /* KIF+Extensions.swift in Sources */,
-				C0620D161EBF8093003EE296 /* UITests.swift in Sources */,
+				C049F9D91EC1189800BADE78 /* UITests.swift in Sources */,
 				C0D8447B1EBF7EA300898660 /* flickr_SearchTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

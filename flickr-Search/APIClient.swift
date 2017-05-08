@@ -27,71 +27,73 @@ class APIClient {
                     store.items.removeAll()
                     
                     // we have the results, now remove the extra \ so JSON is valid
-                    let jsonWithInvalidChars = JSON(data: data!)
-                    
-                    if let jsonWithInvalidCharsString = jsonWithInvalidChars.rawString() {
-                        let jsonWithValidCharsString = jsonWithInvalidCharsString.replacingOccurrences(of: "\\'", with: "'")
+                    if let data = data {
+                        let jsonWithInvalidChars = JSON(data: data)
                         
-                        if let jsonWithValidCharsData = jsonWithValidCharsString.data(using: String.Encoding.utf8) {
-                            do {
-                                // create the dictionary of objects
-                                if let responseJSON = try JSONSerialization.jsonObject(with: jsonWithValidCharsData, options: [.allowFragments]) as? [String: Any] {
-                                    let itemsDict = responseJSON["items"] as! [[String:Any]]
-                                    
-                                    //unwrap the incoming data and populate item array in datastore
-                                    for itemDict in itemsDict {
-                                        if let titleEncoded = itemDict["title"] as? String {
-                                            if let linkEncoded = itemDict["link"] as? String {
-                                                if let mediaDict = itemDict["media"] as? [String:String] {
-                                                    if let media = mediaDict["m"] {
-                                                        if let date_takenString = itemDict["date_taken"] as? String {
-                                                            if let descriptionEncoded = itemDict["description"] as? String {
-                                                                
-                                                                // clean strings
-                                                                let charsToTrim = CharacterSet(charactersIn: " , :")
-                                                                
-                                                                var title = self.decodeCharactersIn(string: titleEncoded)
-                                                                title = title.trimmingCharacters(in: charsToTrim)
-                                                                title.characters.count == 0 ? title = "no title" : ()
-                                                                
-                                                                let link = self.decodeCharactersIn(string: linkEncoded)
-                                                                
-                                                                var description = self.decodeCharactersIn(string: descriptionEncoded)
-                                                                description = description.trimmingCharacters(in: charsToTrim)
-                                                                
-                                                                // get width and height from description
-                                                                let width = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "width")
-                                                                let height = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "height")
-                                                                
-                                                                // Convert date_takenString to Date
-                                                                let dateFormat = DateFormatter()
-                                                                dateFormat.dateFormat = "yyyy-MM-dd'T'HH:mm:ss-SS:SS"
-                                                                if let date_taken = (dateFormat.date(from: date_takenString) as NSDate?) {
+                        if let jsonWithInvalidCharsString = jsonWithInvalidChars.rawString() {
+                            let jsonWithValidCharsString = jsonWithInvalidCharsString.replacingOccurrences(of: "\\'", with: "'")
+                            
+                            if let jsonWithValidCharsData = jsonWithValidCharsString.data(using: String.Encoding.utf8) {
+                                do {
+                                    // create the dictionary of objects
+                                    if let responseJSON = try JSONSerialization.jsonObject(with: jsonWithValidCharsData, options: [.allowFragments]) as? [String: Any] {
+                                        let itemsDict = responseJSON["items"] as! [[String:Any]]
+                                        
+                                        //unwrap the incoming data and populate item array in datastore
+                                        for itemDict in itemsDict {
+                                            if let titleEncoded = itemDict["title"] as? String {
+                                                if let linkEncoded = itemDict["link"] as? String {
+                                                    if let mediaDict = itemDict["media"] as? [String:String] {
+                                                        if let media = mediaDict["m"] {
+                                                            if let date_takenString = itemDict["date_taken"] as? String {
+                                                                if let descriptionEncoded = itemDict["description"] as? String {
                                                                     
-                                                                    // create object
-                                                                    let itemInst = Item(title: title, link: link, media: media, date_taken: date_taken as Date, description: description, width: width, height: height)
-                                                                    itemsUnsorted.append(itemInst)
+                                                                    // clean strings
+                                                                    let charsToTrim = CharacterSet(charactersIn: " , :")
+                                                                    
+                                                                    var title = self.decodeCharactersIn(string: titleEncoded)
+                                                                    title = title.trimmingCharacters(in: charsToTrim)
+                                                                    title.characters.count == 0 ? title = "no title" : ()
+                                                                    
+                                                                    let link = self.decodeCharactersIn(string: linkEncoded)
+                                                                    
+                                                                    var description = self.decodeCharactersIn(string: descriptionEncoded)
+                                                                    description = description.trimmingCharacters(in: charsToTrim)
+                                                                    
+                                                                    // get width and height from description
+                                                                    let width = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "width")
+                                                                    let height = self.getValueFromDesc(descriptionEncoded: descriptionEncoded, imgTagAttribute: "height")
+                                                                    
+                                                                    // Convert date_takenString to Date
+                                                                    let dateFormat = DateFormatter()
+                                                                    dateFormat.dateFormat = "yyyy-MM-dd'T'HH:mm:ss-SS:SS"
+                                                                    if let date_taken = (dateFormat.date(from: date_takenString) as NSDate?) {
+                                                                        
+                                                                        // create object
+                                                                        let itemInst = Item(title: title, link: link, media: media, date_taken: date_taken as Date, description: description, width: width, height: height)
+                                                                        itemsUnsorted.append(itemInst)
+                                                                    }
                                                                 }
                                                             }
                                                         }
                                                     }
                                                 }
-                                            }
-                                        } // end for loop
-                                        store.items = itemsUnsorted.sorted(by: { $0.title < $1.title }) // sort by title
+                                            } // end for loop
+                                            store.items = itemsUnsorted.sorted(by: { $0.title < $1.title }) // sort by title
+                                        }
                                     }
+                                    // return response
+                                    store.items.count == 0 ? completion("noItemsFound") : completion("success")
+                                } catch {
+                                    // Invalid JSON is returned periodically even after slash is removed.
+                                    // When this occurs, report the issue so the query can be issued again.
+                                    if String(describing: error).contains("Code=3840") {
+                                        completion("invalidJSON-Retry")
+                                    } else {
+                                        completion("error") // JSON is valid, but another error occurred.
+                                    }
+                                    print("error = \(error)")
                                 }
-                                // return response
-                                store.items.count == 0 ? completion("noItemsFound") : completion("success")
-                            } catch {
-                                // Invalid JSON is returned periodically even after slash is removed.
-                                // When this occurs, report the issue so the query can be issued again.
-                                if String(describing: error).contains("Code=3840") {
-                                    completion("invalidJSON")
-                                } else {
-                                    completion("error") // JSON is valid, but another error occurred.
-                                }
-                                print("error = \(error)")
                             }
                         }
                     }

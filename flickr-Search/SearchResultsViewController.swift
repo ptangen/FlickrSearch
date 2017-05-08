@@ -27,30 +27,34 @@ class SearchResultsViewController: UIViewController, SearchResultsViewDelegate {
     func getFlickrData(searchString:String) {
         
         APIClient.searchFlickr(tags: searchString) { response in
-            if response == "success" {
-                OperationQueue.main.addOperation {
-                    // reload tableview to show search results
-                    self.searchResultsViewInst.searchResultsTableView.reloadData()
-                }
-            } else if response == "invalidJSON" {
-                // invalid JSON is fairly rare, if we get invalid JSON, reissue the query
-                print("invalid JSON received from flickr, reissue the query")
-                self.getFlickrData(searchString: searchString)
+            
+            switch response {
+                case "success":
+                    OperationQueue.main.addOperation {
+                        // reload tableview to show search results
+                        self.searchResultsViewInst.searchResultsTableView.reloadData()
+                    }
                 
-            } else if response == "noItemsFound" {
-                let title = "No Items Found"
-                let message = "flickr did not have any images that matched your search terms."
-                self.showAlertMessage(title: title, message: message)
+                case "invalidJSON-Retry":
+                    print("invalid JSON received from flickr, reissue the query")
+                    let _ = self.getFlickrData(searchString: searchString)
                 
-            } else { // error
-                OperationQueue.main.addOperation {
-                    // show error message in the current view
-                    let title = "Error"
-                    let message = "Unable to retrieve data from the server."
+                case "noItemsFound":
+                    let title = "No Items Found"
+                    let message = "flickr did not have any images that matched your search terms."
                     self.showAlertMessage(title: title, message: message)
-                }
+                
+                default:
+                    // error
+                    OperationQueue.main.addOperation {
+                        // show error message in the current view
+                        let title = "Error"
+                        let message = "Unable to retrieve data from the server."
+                        self.showAlertMessage(title: title, message: message)
+                    }
             }
         }
+
     }
     
     override func loadView(){
