@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchResultsViewController: UIViewController, DetailViewDelegate {
+class SearchResultsViewController: UIViewController, SearchResultsViewDelegate {
 
     let store = DataStore.sharedInstance
     var searchResultsViewInst = SearchResultsView()
@@ -19,7 +19,7 @@ class SearchResultsViewController: UIViewController, DetailViewDelegate {
         self.definesPresentationContext = true // hides search bar after navigating away from the page
         
         // fetch the initial set of images from flickr
-        let initialSearchTerm = "cat"
+        let initialSearchTerm = "kitten"
         self.searchResultsViewInst.searchController.searchBar.text = initialSearchTerm
         self.searchResultsViewInst.searchBarSearchButtonClicked(self.searchResultsViewInst.searchController.searchBar)
     }

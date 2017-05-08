@@ -21,7 +21,7 @@ class UITests : KIFTestCase {
         
         // 1. verify default search term exists and data was returned
         var searchField = tester().waitForView(withAccessibilityLabel: "searchField")
-        tester().expect(searchField, toContainText: "cat")
+        tester().expect(searchField, toContainText: "kitten")
         
         // tap item in second cell and verify detail view appears
         var indexPath = IndexPath(row: 1, section: 0)

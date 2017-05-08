@@ -9,7 +9,7 @@
 import UIKit
 import SDWebImage
 
-protocol DetailViewDelegate: class {
+protocol SearchResultsViewDelegate: class {
     func openDetail(item: Item)
     func getFlickrData(searchString: String)
 }
@@ -17,7 +17,7 @@ protocol DetailViewDelegate: class {
 class SearchResultsView: UIView, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
 
     let store = DataStore.sharedInstance
-    weak var delegate: DetailViewDelegate?
+    weak var delegate: SearchResultsViewDelegate?
     let searchResultsTableView = UITableView()
     let searchController = UISearchController(searchResultsController: nil)
     let getSearchResultsButtonForUITest = UIButton()

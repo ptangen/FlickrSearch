@@ -35,7 +35,7 @@ class APIClient {
                         if let jsonWithValidCharsData = jsonWithValidCharsString.data(using: String.Encoding.utf8) {
                             do {
                                 // create the dictionary of objects
-                                if let responseJSON = try JSONSerialization.jsonObject(with: jsonWithValidCharsData, options: []) as? [String: Any] {
+                                if let responseJSON = try JSONSerialization.jsonObject(with: jsonWithValidCharsData, options: [.allowFragments]) as? [String: Any] {
                                     let itemsDict = responseJSON["items"] as! [[String:Any]]
                                     
                                     //unwrap the incoming data and populate item array in datastore
