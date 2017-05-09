@@ -1,4 +1,4 @@
-## Aetna Digital iOS Code Test
+## iOS Code Test
 ## Requirements
 
 Develop an iOS application that allows a user to search Flickr. Create a user
